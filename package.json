@@ -1,0 +1,10 @@
+{
+  "type": "module",
+  "dependencies": {
+    "node": "^18.20.2"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "dev": "tsc --project tsconfig.json --watch"
+  }
+}
