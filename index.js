@@ -1,4 +1,7 @@
 import { User, getUser } from "./sl/user.js";
-let user = new User("yandemc")
-await user.update()
-console.log(await user.isFollowing("griffpatch"))
+import { login, Session } from "./sl/session.js";
+import Encoding from "./sl/encoder.js"
+import { ForumTopic, ForumPost } from "./sl/forum.js"
+
+export { User, getUser, login, Encoding, ForumPost, ForumTopic, Session }
+

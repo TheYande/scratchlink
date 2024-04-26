@@ -103,7 +103,7 @@ const letters = [
     "'"
 ]
 
-export class Encoding {
+export default class Encoding {
     decode(inp) {
         if (typeof inp != "string") throw (exceptions.InvalidDecodeInput)
 

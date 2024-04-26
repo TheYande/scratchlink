@@ -1,13 +1,27 @@
 //this one was pain
 
+import { error } from "console";
+
 export class User {
     /**
      * Represents a Scratch user.
      * @param {Object} entries - Object containing attributes of the user.
      */
-     constructor(entries, session) {
+    constructor(entries, session) {
         this._session = session;
-        this._headers = session ? session._headers : {};
+        this._headers = session ? {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
+            "Accept": "application/json, text/javascript, */*; q=0.01",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Content-Type": "application/json",
+            "X-CSRFToken": `${this._session._headers["x-csrftoken"]}`,
+            "X-Requested-With": "XMLHttpRequest",
+            "Sec-Fetch-Dest": "empty",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Site": "same-origin",
+            "Cookie":
+                ` scratchcsrftoken="${this._session._headers["x-csrftoken"]}"; scratchsessionsid="${this._session.session_id}"`
+        } : {};
         this._cookies = session ? session._cookies : {};
         this._json_headers = { ...this._headers, 'accept': 'application/json', 'Content-Type': 'application/json' };
         this.username = entries
@@ -22,6 +36,19 @@ export class User {
             }
             const data = await response.json();
             this.updateFromDict(data);
+            this._headers = session ? {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
+                "Accept": "application/json, text/javascript, */*; q=0.01",
+                "Accept-Language": "en-US,en;q=0.5",
+                "Content-Type": "application/json",
+                "X-CSRFToken": `${this._session._headers["x-csrftoken"]}`,
+                "X-Requested-With": "XMLHttpRequest",
+                "Sec-Fetch-Dest": "empty",
+                "Sec-Fetch-Mode": "cors",
+                "Sec-Fetch-Site": "same-origin",
+                "Cookie":
+                    ` scratchcsrftoken="${this._session._headers["x-csrftoken"]}"; scratchsessionsid="${this._session.session_id}"`
+            } : {};
         } catch (error) {
             console.error("Error updating user:", error);
         }
@@ -34,7 +61,7 @@ export class User {
         }
         this.username = response.username
         this.scratchteam = response.scratchteam;
-        this.joinDate = response.history.joined;
+        this.joinDate = response.history?.joined;
         this.aboutMe = response.profile.bio;
         this.wiwo = response.profile.status;
         this.country = response.profile.country;
@@ -162,7 +189,7 @@ export class User {
     async followerNames({ limit = 40, offset = 0 } = {}) {
         try {
             const followers = await this.followers({ limit, offset });
-            return followers.map((follower) => { return follower.username.username});
+            return followers.map((follower) => { return follower.username.username });
         } catch (error) {
             console.error("Error fetching follower names:", error);
             return [];
@@ -464,10 +491,31 @@ export class User {
                     comments_allowed: true,
                     id: this.username,
                     bio: text,
-                    thumbnail_url: this.icon_url,
+                    thumbnail_url: this.iconUrl,
                     userId: this.id,
                     username: this.username
                 })
+            });
+
+            await fetch("https://scratch.mit.edu/site-api/users/all/YandeMC/", {
+                "credentials": "include",
+                "headers": {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
+                    "Accept": "application/json, text/javascript, */*; q=0.01",
+                    "Accept-Language": "en-US,en;q=0.5",
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": `${this._session._headers["x-csrftoken"]}`,
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Sec-Fetch-Dest": "empty",
+                    "Sec-Fetch-Mode": "cors",
+                    "Sec-Fetch-Site": "same-origin",
+                    "Cookie":
+                        ` scratchcsrftoken="${this._session._headers["x-csrftoken"]}"; scratchsessionsid="${this._session.session_id}"`
+                },
+                "referrer": "https://scratch.mit.edu/users/YandeMC/",
+                "body": `{\"id\":\"${this.username}\",\"userId\":${this.id},\"username\":\"YandeMC\",\"thumbnail_url\":\"${this.iconUrl}\",\"bio\":\"\"}`,
+                "method": "PUT",
+                "mode": "cors"
             });
         } catch (error) {
             console.error("Error setting user's 'About me' section:", error);
@@ -515,14 +563,31 @@ export class User {
         };
 
         try {
-            const response = await fetch(`https://scratch.mit.edu/site-api/comments/user/${this.username}/add/`, {
-                method: 'POST',
-                headers: this._headers,
-                cookies: this._cookies,
-                body: JSON.stringify(data)
+            const response = await fetch("https://scratch.mit.edu/site-api/comments/user/Epicducks5/add/", {
+                "credentials": "include",
+                "headers": {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
+                    "Accept": "text/html, */*; q=0.01",
+                    "Accept-Language": "en-US,en;q=0.5",
+                    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+                    "X-CSRFToken": `${this._session._headers["x-csrftoken"]}`,
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Sec-Fetch-Dest": "empty",
+                    "Sec-Fetch-Mode": "cors",
+                    "Sec-Fetch-Site": "same-origin",
+                    "Cookie":
+                        ` scratchcsrftoken="${this._session._headers["x-csrftoken"]}"; scratchsessionsid="${this._session.session_id}"`
+                },
+                "referrer": "https://scratch.mit.edu/users/Epicducks5/",
+                "body": JSON.stringify(data),
+                "method": "POST",
+                "mode": "cors"
             });
 
+
+
             if (!response.ok) {
+                console.log(await response.text())
                 throw new Error(`Failed to post comment: ${response.statusText}`);
             }
 
@@ -556,32 +621,53 @@ export class User {
     }
     async follow() {
         try {
-            await fetch(`https://scratch.mit.edu/site-api/users/followers/${this.username}/add/?usernames=${this._session._username}`, {
-                method: 'PUT',
-                headers: {
-                    ...this._json_headers,
-                    'x-csrftoken': 'a', // Assuming 'a' is the CSRF token
-                },
-                credentials: 'include', // Send cookies
+            const result = await fetch(`https://scratch.mit.edu/site-api/users/followers/${this.username}/add/?usernames=${this._session.username}`, {
+                "credentials": "include",
+                "headers": this._headers,
+                "referrer": `https://scratch.mit.edu/users/${this.username}/`,
+                "body": `{\"id\":\"${this.username}\",\"userId\":${this.id},\"username\":\"${this.username}\",\"thumbnail_url\":\"//uploads.scratch.mit.edu/users/avatars/108245966.png\",\"comments_allowed\":true}`,
+                "method": "PUT",
+                "mode": "cors"
             });
+
+            if (!result.ok) throw ("Server returned a non-ok status code: " + result.status)
             console.log(`Successfully followed user ${this.username}.`);
+            return true
         } catch (error) {
             console.error('Error following user:', error);
+            return false
         }
     }
     async unfollow() {
+
         try {
-            await fetch(`https://scratch.mit.edu/site-api/users/followers/${this.username}/remove/?usernames=${this._session._username}`, {
-                method: 'PUT',
-                headers: {
-                    ...this._json_headers,
-                    'x-csrftoken': 'a', // Assuming 'a' is the CSRF token
+            const result = await fetch(`https://scratch.mit.edu/site-api/users/followers/${this.username}/remove/?usernames=${this._session.username}`, {
+                "credentials": "include",
+                "headers": {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
+                    "Accept": "application/json, text/javascript, */*; q=0.01",
+                    "Accept-Language": "en-US,en;q=0.5",
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": `${this._session._headers["x-csrftoken"]}`,
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Sec-Fetch-Dest": "empty",
+                    "Sec-Fetch-Mode": "cors",
+                    "Sec-Fetch-Site": "same-origin",
+                    "Cookie":
+                        ` scratchcsrftoken="${this._session._headers["x-csrftoken"]}"; scratchsessionsid="${this._session.session_id}"`
                 },
-                credentials: 'include', // Send cookies
+                "referrer": `https://scratch.mit.edu/users/${this.username}/`,
+                "body": `{\"id\":\"${this.username}\",\"userId\":${this.id},\"username\":\"${this.username}\",\"thumbnail_url\":\"//uploads.scratch.mit.edu/users/avatars/108245966.png\",\"comments_allowed\":true}`,
+                "method": "PUT",
+                "mode": "cors"
             });
+
+            if (!result.ok) throw ("Server returned a non-ok status code: " + result.status)
             console.log(`Successfully unfollowed user ${this.username}.`);
+            return true
         } catch (error) {
             console.error('Error unfollowing user:', error);
+            return false
         }
     }
     async deleteComment(comment_id) {
@@ -589,7 +675,7 @@ export class User {
             await fetch(`https://scratch.mit.edu/site-api/comments/user/${this.username}/del/`, {
                 method: 'POST',
                 headers: {
-                    ...this._json_headers,
+                    ...this._headers,
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include', // Send cookies
@@ -605,7 +691,7 @@ export class User {
             await fetch(`https://scratch.mit.edu/site-api/comments/user/${this.username}/rep/`, {
                 method: 'POST',
                 headers: {
-                    ...this._json_headers,
+                    ...this._headers,
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include', // Send cookies
