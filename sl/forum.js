@@ -51,7 +51,7 @@ export class ForumTopic {
         return await get(`https://scratchdb.lefty.one/v3/forum/topic/history/${this.id}`)
     }
 
-    async posts({ page = 0, order = "oldest" } = {}) {
+    async posts( page = 0, order = "oldest" ) {
         try {
             const data = await get(`https://scratchdb.lefty.one/v3/forum/topic/posts/${this.id}/${page}?o=${order}`);
 
@@ -122,8 +122,7 @@ export class ForumPost {
      * Fetches the topic object representing the forum topic this post is in.
      * @returns {Promise<Object>} - Promise object representing the forum topic.
      */
-    async get_topic() {
-        const ForumTopic = require('./ForumTopic'); // Assuming ForumTopic class definition is available in ForumTopic.js
+    async get_topic() {// Assuming ForumTopic class definition is available in ForumTopic.js
         const t = new ForumTopic(this.topic_id, this._session);
         await t.update();
         return t;
@@ -135,7 +134,7 @@ export class ForumPost {
      */
     async get_author() {
       
-        const u = new User({ username: this.author }, this._session);
+        const u = new user.User({ username: this.author }, this._session);
         await u.update();
         return u;
     }
