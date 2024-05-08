@@ -1,12 +1,47 @@
 {
-  "type": "module",
-  "dependencies": {
-    "node": "^18.20.2"
-  },
-  "scripts": {
-    "build": "tsc --project tsconfig.json",
-    "dev": "tsc --project tsconfig.json --watch"
-  },
+
   "name": "scratchlink",
-  "version": "0.3.0"
+  "version": "3.1.0",
+  "description": "Client for Scratch in JS",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --minify --dts",
+    "build:watch": "tsup src/index.ts --format esm --minify --dts --watch",
+    "prepare": "tsup src/index.ts --format esm --minify --dts",
+    "test": "tap --node-arg=--experimental-specifier-resolution=node",
+    "lint": "prettier --check .",
+    "format": "prettier --write ."
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.8.2",
+    "@types/ws": "^8.5.6",
+    "prettier": "^3.0.3",
+    "tap": "^18.4.2",
+    "tsup": "^7.2.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "form-data-encoder": "^3.0.0",
+    "formdata-node": "^5.0.1",
+    "node-html-parser": "^6.1.10",
+    "ws": "^8.14.2"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "engineStrict": true,
+  "sideEffects": false
 }
