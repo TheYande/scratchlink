@@ -66,7 +66,7 @@ class CloudConnection extends events.EventEmitter {
     });
     this.connection.on("error", (err) => {
       this.emit("error", err);
-      throw err;
+      // throw err;
     });
     this.connection.on("close", () => {
       if (!this.disconnected) {
